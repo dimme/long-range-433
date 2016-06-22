@@ -7,7 +7,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.print(getCharacter());
+  Serial.print(getBit());
 }
 
 char getCharacter() {
@@ -39,7 +39,7 @@ char getCharacter() {
 
 byte getBit() {
   while (true) {
-    delayMicroseconds(100);
+    delayMicroseconds(1000);
     shift_right(buff);
     if (digitalRead(12) == 1) {
       buff[0] = 1;
@@ -50,11 +50,11 @@ byte getBit() {
     
     int corr = xcorr(one,buff);
     
-    if (corr > 20) {
+    if (corr > 30) {
       return (byte) 1;
     }
 
-    if (corr < -20) {
+    if (corr < -30) {
       return (byte) 0;
     }
     
