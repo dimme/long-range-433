@@ -1,56 +1,55 @@
-byte one[] = {1,0,0,1,1,0,0,0,1,1,0,1,0,0,0,0,1,0,0,1,0,1,0,0,1,0,1,0,0,1,0,0,1,0,0,1,0,0,0,1,1,1,1,0,1,0,1,1,1,1,1,0,0,0,1,0,1,1,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,0,0,1,1,1,0,1,0,0,1,0,0,0,0,0,0,1,1,0,0,1,0,1,0};
+#define PULSETIME 1 //In ms
+
+//byte BARKER_CODE[13] = {1,1,1,1,1,0,0,1,1,0,1,0,1};
+//byte BARKER_CODE[169] = {1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,-1,-1,-1,-1,-1,1,1,-1,-1,1,-1,1,-1,-1,-1,-1,-1,-1,1,1,-1,-1,1,-1,1,-1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,-1,-1,-1,-1,-1,1,1,-1,-1,1,-1,1,-1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1,-1,-1,-1,-1,-1,1,1,-1,-1,1,-1,1,-1,1,1,1,1,1,-1,-1,1,1,-1,1,-1,1};
+byte BARKER_CODE[169] = {1,1,1,1,1,0,0,1,1,0,1,0,1,1,1,1,1,1,0,0,1,1,0,1,0,1,1,1,1,1,1,0,0,1,1,0,1,0,1,1,1,1,1,1,0,0,1,1,0,1,0,1,1,1,1,1,1,0,0,1,1,0,1,0,1,0,0,0,0,0,1,1,0,0,1,0,1,0,0,0,0,0,0,1,1,0,0,1,0,1,0,1,1,1,1,1,0,0,1,1,0,1,0,1,1,1,1,1,1,0,0,1,1,0,1,0,1,0,0,0,0,0,1,1,0,0,1,0,1,0,1,1,1,1,1,0,0,1,1,0,1,0,1,0,0,0,0,0,1,1,0,0,1,0,1,0,1,1,1,1,1,0,0,1,1,0,1,0,1};
+byte BARKER_LENGTH = 169;
 
 void setup() {
-  pinMode(13, OUTPUT);
+  //pinMode(13, OUTPUT);
   pinMode(12, OUTPUT);
 }
 
 void loop() {
-  send("Hello Dimme =)\n");
-  delay(1000);
+  sendString("Hello Dimme =)\n");
 }
 
-void send(String text) {
+void sendString(String text) {
   byte i;
   for (i = 0; i < text.length(); ++i) {
-    send_char(text.charAt(i));
+    sendChar(text.charAt(i));
   }
-  digitalWrite(12, LOW);
-  digitalWrite(13, LOW);
 }
 
-void send_char(char ch) {
+void sendChar(char ch) {
   byte i;
-  for (i = 0; i < 16; ++i) {
-    transmit(1);
+  for (i = 0; i < 8; ++i) {
+    transmitBarkerCode(1);
   }
   for (i = 0; i < 8; ++i) {
     byte b = (ch >> i) & 1;
-    transmit(b);
+    transmitBarkerCode(b);
   }
 }
 
-void transmit(byte b) {
-  int i;
-  for (i = 0; i < 100; ++i) {
+void transmitBarkerCode(byte b) {
+  byte i;
+  for (i = 0; i < BARKER_LENGTH; ++i) {
     if (b == 1) {
-      if (one[i] == 1) {
-        digitalWrite(12, HIGH);
-        digitalWrite(13, HIGH);
-      } else {
-        digitalWrite(12, LOW);
-        digitalWrite(13, LOW);
-      }
+      transmitBit(BARKER_CODE[i]);
     } else {
-      if (one[i] == 0) {
-        digitalWrite(12, HIGH);
-        digitalWrite(13, HIGH);
-      } else {
-        digitalWrite(12, LOW);
-        digitalWrite(13, LOW);
-      }
+      transmitBit(BARKER_CODE[i] == 1 ? 0 : 1);
     }
-    delayMicroseconds(100);
+  }
+}
+
+void transmitBit(byte b) {
+  if (b == 1) {
+    digitalWrite(12, HIGH);
+    delay(PULSETIME);
+  } else {
+    digitalWrite(12, LOW);
+    delay(PULSETIME);
   }
 }
 
