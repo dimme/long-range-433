@@ -37,20 +37,32 @@ void transmit(byte b) {
       if (one[i] == 1) {
         digitalWrite(12, HIGH);
         digitalWrite(13, HIGH);
+        delayMicroseconds(500);
+        digitalWrite(12, LOW);
+        digitalWrite(13, LOW);
       } else {
         digitalWrite(12, LOW);
         digitalWrite(13, LOW);
+        delayMicroseconds(500);
+        digitalWrite(12, HIGH);
+        digitalWrite(13, HIGH);
       }
     } else {
       if (one[i] == 0) {
         digitalWrite(12, HIGH);
         digitalWrite(13, HIGH);
+        delayMicroseconds(500);
+        digitalWrite(12, LOW);
+        digitalWrite(13, LOW);
       } else {
         digitalWrite(12, LOW);
         digitalWrite(13, LOW);
+        delayMicroseconds(500);
+        digitalWrite(12, HIGH);
+        digitalWrite(13, HIGH);
       }
     }
-    delayMicroseconds(100);
+    delayMicroseconds(500);
   }
 }
 
